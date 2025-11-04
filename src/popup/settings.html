@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../styles/main.css">
+        <title>Play TikTok Background - Settings</title>
+    </head>
+    <body class="bg-gray-700 text-white">
+        <div class="max-w-3xl mx-auto p-6">
+            <!-- Header -->
+            <header class="pb-4 border-b border-gray-600">
+                <h1 class="text-2xl font-semibold text-white flex items-center gap-2" id="pageTitle">
+                    <img src="../assets/icons/icon.png" alt="Logo" class="w-8 h-8">
+                    Play TikTok Background Settings
+                </h1>
+                <div class="mb-3 text-xs text-gray-400 flex items-center gap-1">
+                    Created by YouGo
+                    <a href="https://github.com/YouG-o" target="_blank" rel="noopener noreferrer">
+                        <img src="../assets/icons/Github-Dark.svg" alt="GitHub" title="GitHub" class="w-4 h-4 hover:opacity-80 transition-opacity">
+                    </a>
+                </div>
+                <div id="welcomeMessage" class="hidden">
+                    <p class="text-base text-gray-300 mb-1">
+                        Thanks for installing! Here you can configure how the extension behaves.
+                    </p>
+                    <div id="reloadNotice"
+                        class="flex flex-col items-center justify-center mt-3 mb-6 p-4 rounded-lg border-4 border-yellow-400 bg-yellow-100 text-yellow-900 shadow-lg"
+                        style="font-size: 1.08rem; font-weight: 500;">
+                        <div class="flex items-center gap-2 mb-2">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="#f59e00" aria-hidden="true" focusable="false">
+                                <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+                            </svg>
+                            <b>Important:</b>
+                        </div>
+                        <div class="text-center">
+                            For the extension to work on TikTok tabs that were already open before installation, you must reload those tabs.<br>
+                        </div>
+                        <div class="flex justify-center">
+                            <button id="reloadTikTokTabsBtn"
+                                class="mt-3 px-6 py-2 flex items-center justify-center gap-2 rounded-lg bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-bold border-2 border-yellow-600 shadow-lg transition"
+                                style="font-size: 1.08rem;">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6" aria-hidden="true" focusable="false">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                </svg>
+                                Reload all active TikTok tabs
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main>
+                <div class="space-y-6">
+                    <!-- Play Videos in Background Feature -->
+                    <div class="p-5 rounded-lg border border-gray-600 hover:bg-gray-600/30 transition-colors">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <h2 class="text-lg font-medium text-white">Play Videos in Background</h2>
+                                <div class="relative group tooltip">
+                                    <svg class="w-5 h-5 text-gray-400 cursor-help group hover:text-gray-300" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                                    </svg>
+                                    <span class="absolute z-20 bottom-full left-0 ml-[-20px] mb-2 w-[220px] px-3 py-2 text-sm text-white bg-gray-900/95 rounded-md shadow-lg whitespace-normal opacity-0 pointer-events-none invisible group-hover:opacity-100 group-hover:visible transition-opacity">
+                                        Keep playing TikTok videos even when switching tabs or minimizing the browser.
+                                    </span>
+                                </div>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer" id="playInBackgroundFeature">
+                                <div class="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+           <footer class="flex flex-col gap-4 pt-4 mt-4 border-t border-gray-600">
+                <div class="flex justify-center">
+                    <a href="https://ko-fi.com/yougo" target="_blank" rel="noopener noreferrer">
+                        <img src="../assets/icons/ko-fi.png" alt="Support me on Ko-fi" title="Support me on Ko-fi" class="max-h-10">
+                    </a>
+                </div>
+                <div class="flex items-center justify-between">
+                    <p class="text-xs text-gray-400">v<span id="extensionVersion"></span></p>
+                    <a href="https://github.com/YouG-o/Play-TikTok-Background/issues" 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        class="text-xs text-gray-400 hover:text-gray-300 transition-colors flex items-center gap-1">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                        </svg>
+                        Report an issue
+                    </a>
+                </div>
+            </footer>
+        </div>
+
+        <script src="../browser-polyfill.js"></script>
+        <script src="../popup/popup.js" type="module"></script>
+    </body>
+</html>
