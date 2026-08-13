@@ -3,6 +3,8 @@
   [![Release Version](https://img.shields.io/github/v/release/YouG-o/Play-TikTok-Background?style=flat&logo=github&color=2ea44f)](https://github.com/YouG-o/Play-TikTok-Background/releases/latest)
   [![Github Stargazers](https://img.shields.io/github/stars/YouG-o/Play-TikTok-Background?style=flat&logo=github&color=f9d71c)](https://github.com/YouG-o/Play-TikTok-Background/stargazers)
   ![LICENSE](https://img.shields.io/github/license/YouG-o/Play-TikTok-Background?label=&style=flat&logo=license&logoColor=white&color=3da639)
+  [![Mozilla Users](https://img.shields.io/amo/users/play-tiktok-background?label=&style=flat&logo=firefox-browser&logoColor=white&color=ff7139)](https://addons.mozilla.org/firefox/addon/play-tiktok-background/)
+  [![Chrome Web Store Users](https://img.shields.io/chrome-web-store/users/mliebogcnclhlpbbmffmopmpjfllmkcf?label=&style=flat&logo=google-chrome&logoColor=white&color=4285F4)](https://chromewebstore.google.com/detail/mliebogcnclhlpbbmffmopmpjfllmkcf)
 
 </div>
 
@@ -20,12 +22,19 @@
 
   <br>
 
-
-
-
-
 </div>
 
+###
+
+<div align="center">
+
+  ## Download
+
+
+  [![Available on Mozzila](./assets/images/firefox.png)](https://addons.mozilla.org/firefox/addon/play-tiktok-background/)
+  [![Available on Chrome Web Store](./assets/images/chrome.png)](https://chromewebstore.google.com/detail/mliebogcnclhlpbbmffmopmpjfllmkcf)
+
+</div>
 
 ###
 

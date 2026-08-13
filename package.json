@@ -1,6 +1,6 @@
 {
   "name": "ptb",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Keep Tiktok videos playing while switching tabs or minimizing the browser.",
   "scripts": {
     "clean": "rm -rf dist && rm -f manifest.json",
