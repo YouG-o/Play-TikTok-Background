@@ -31,8 +31,8 @@
   ## Download
 
 
-  [![Available on Mozzila](./assets/images/firefox.png)](https://addons.mozilla.org/firefox/addon/play-tiktok-background/)
-  [![Available on Chrome Web Store](./assets/images/chrome.png)](https://chromewebstore.google.com/detail/mliebogcnclhlpbbmffmopmpjfllmkcf)
+  [![Available on Mozzila](./assets/images/mozilla-firefox_banner.png)](https://addons.mozilla.org/firefox/addon/play-tiktok-background/)
+  [![Available on Chrome Web Store](./assets/images/chrome-web-store_banner.png)](https://chromewebstore.google.com/detail/mliebogcnclhlpbbmffmopmpjfllmkcf)
 
 </div>
 
