@@ -13,6 +13,12 @@ import { ExtensionSettings } from "../types/types";
 export const DEFAULT_SETTINGS: ExtensionSettings = {
     playInBackground: {
         enabled: true
+    },
+    preventRepeat: {
+        enabled: false
+    },
+    autoScroll: {
+        enabled: false
     }
 };
 
@@ -20,6 +26,9 @@ export const DEFAULT_SETTINGS: ExtensionSettings = {
 export const PLAYBACK_EVENTS = {
     enable: 'ptb:enable-background-playback',
     disable: 'ptb:disable-background-playback',
+    repeat: 'ptb:repeat-videos',
+    stop: 'ptb:stop-after-video',
+    next: 'ptb:next-after-video',
     ready: 'ptb:background-playback-ready'
 } as const;
 

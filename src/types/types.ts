@@ -11,7 +11,15 @@ export interface ExtensionSettings {
     playInBackground: {
         enabled: boolean;
     }
+    preventRepeat: {
+        enabled: boolean;
+    }
+    autoScroll: {
+        enabled: boolean;
+    }
 }
+
+export type VideoCompletionMode = 'repeat' | 'stop' | 'next';
 
 export interface Message {
     action: string;

@@ -24,6 +24,9 @@ function syncPlaybackSettings(): void {
         window.dispatchEvent(new Event(currentSettings.playInBackground.enabled
             ? PLAYBACK_EVENTS.enable
             : PLAYBACK_EVENTS.disable));
+        window.dispatchEvent(new Event(currentSettings.autoScroll.enabled
+            ? PLAYBACK_EVENTS.next
+            : currentSettings.preventRepeat.enabled ? PLAYBACK_EVENTS.stop : PLAYBACK_EVENTS.repeat));
     }
 }
 

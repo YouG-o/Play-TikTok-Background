@@ -8,16 +8,9 @@
  */
 
 import { coreLog } from '../utils/logger';
+import { isInViewport } from './video';
 
 let disposePlayback: (() => void) | null = null;
-
-/** Check the current layout instead of retaining a single active video. */
-function isInViewport(video: HTMLVideoElement): boolean {
-    const rect = video.getBoundingClientRect();
-    return rect.width > 0 && rect.height > 0 &&
-        rect.bottom > 0 && rect.right > 0 &&
-        rect.top < window.innerHeight && rect.left < window.innerWidth;
-}
 
 /** Intercept page calls, including videos created later or started in background. */
 export function setupBackgroundPlayback(): void {

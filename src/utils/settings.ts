@@ -40,6 +40,12 @@ export function migrateSettings(userSettings: any, defaultSettings: any): any {
         }
     }
     
+    // Auto-scroll already prevents repetition; keep completion modes exclusive.
+    if (settings.autoScroll?.enabled && settings.preventRepeat?.enabled) {
+        settings.preventRepeat.enabled = false;
+        hasChanges = true;
+    }
+
     // Save changes if needed
     if (hasChanges) {
         browser.storage.local.set({ settings }).catch((err: unknown) => {

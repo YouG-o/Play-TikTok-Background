@@ -24,6 +24,14 @@
 
 </div>
 
+## Features
+
+- **Background playback** — Keep TikTok videos playing when switching tabs or minimizing the browser. Enabled by default.
+- **Prevent video from repeating** — Stop each video when it ends instead of looping. Disabled by default.
+- **Auto-scroll to next video** — Automatically move to the next video when playback finishes. Uses TikTok's native animated navigation while focused and immediate scrolling in the background. Disabled by default.
+
+Configure these options in the extension popup or settings page. Preventing repetition and auto-scroll are mutually exclusive: enabling either turns the other off. Both work independently of background playback, and changes apply without reloading TikTok.
+
 ###
 
 <div align="center">

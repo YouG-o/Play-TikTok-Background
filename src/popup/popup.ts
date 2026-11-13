@@ -8,14 +8,19 @@
  */
 
 import { ExtensionSettings } from '../types/types';
-import { loadExtensionSettings } from '../utils/settings';
+import { loadExtensionSettings, saveExtensionSettings } from '../utils/settings';
+import { renderPlaybackControls } from './playbackControls';
 
 /**
  * This file handles the popup UI interactions and saves settings to storage
  */
 
 // DOM Elements
-const playInBackgroundFeature = document.getElementById('playInBackgroundFeature') as HTMLInputElement;
+const controls = renderPlaybackControls();
+let currentSettings: ExtensionSettings;
+let settingsRevision = 0;
+let pendingSaves = 0;
+let saveQueue: Promise<void> = Promise.resolve();
 const extensionVersionElement = document.getElementById('extensionVersion') as HTMLSpanElement;
 
 /**
@@ -32,10 +37,14 @@ function displayExtensionVersion() {
  * Load saved settings from storage and update the UI.
  */
 async function loadSettings() {
+    const revision = ++settingsRevision;
     try {
         const settings = await loadExtensionSettings();
-        if (settings.playInBackground) {
-            playInBackgroundFeature.checked = settings.playInBackground.enabled;
+        if (revision !== settingsRevision) return;
+        currentSettings = settings;
+        for (const key of Object.keys(controls) as (keyof ExtensionSettings)[]) {
+            controls[key].checked = currentSettings[key].enabled;
+            controls[key].disabled = false;
         }
     } catch (error) {
         console.error('Failed to load settings:', error);
@@ -45,16 +54,28 @@ async function loadSettings() {
 /**
  * Save the current settings to storage.
  */
-async function saveSettings() {
+async function saveSettings(changedFeature: keyof ExtensionSettings) {
+    ++settingsRevision;
+    if (changedFeature === 'autoScroll' && controls.autoScroll.checked) controls.preventRepeat.checked = false;
+    if (changedFeature === 'preventRepeat' && controls.preventRepeat.checked) controls.autoScroll.checked = false;
     const settings: ExtensionSettings = {
+        ...currentSettings,
         playInBackground: {
-            enabled: playInBackgroundFeature.checked
-        }
+            enabled: controls.playInBackground.checked
+        },
+        preventRepeat: { enabled: controls.preventRepeat.checked },
+        autoScroll: { enabled: controls.autoScroll.checked }
     };
+    currentSettings = settings;
+    pendingSaves++;
+    // Preserve the order of rapid changes, including switches between modes.
+    saveQueue = saveQueue.catch(() => {}).then(() => saveExtensionSettings(settings));
     try {
-        await browser.storage.local.set({ settings });
+        await saveQueue;
     } catch (error) {
         console.error('Failed to save settings:', error);
+    } finally {
+        if (--pendingSaves === 0) await loadSettings();
     }
 }
 
@@ -62,7 +83,9 @@ async function saveSettings() {
  * Initialize event listeners for the popup.
  */
 function initEventListeners() {
-    playInBackgroundFeature.addEventListener('change', saveSettings);
+    for (const key of Object.keys(controls) as (keyof ExtensionSettings)[]) {
+        controls[key].addEventListener('change', () => saveSettings(key));
+    }
 }
 
 // Initialize on page load
@@ -70,6 +93,10 @@ document.addEventListener('DOMContentLoaded', () => {
     displayExtensionVersion();
     loadSettings();
     initEventListeners();
+});
+
+browser.storage.onChanged.addListener((changes, areaName) => {
+    if (areaName === 'local' && changes.settings && pendingSaves === 0) loadSettings();
 });
 
 
