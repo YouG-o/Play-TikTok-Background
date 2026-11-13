@@ -53,26 +53,8 @@ async function saveSettings() {
     };
     try {
         await browser.storage.local.set({ settings });
-        updateActiveTabs(settings);
     } catch (error) {
         console.error('Failed to save settings:', error);
-    }
-}
-
-/**
- * Update all active TikTok tabs with new settings.
- */
-async function updateActiveTabs(settings: ExtensionSettings) {
-    const tabs = await browser.tabs.query({ url: '*://*.tiktok.com/*' });
-    for (const tab of tabs) {
-        if (tab.id) {
-            browser.tabs.sendMessage(tab.id, {
-                action: 'updateSettings',
-                settings: settings
-            }).catch((error: unknown) => {
-                console.error(`Failed to update tab ${tab.id}:`, error);
-            });
-        }
     }
 }
 

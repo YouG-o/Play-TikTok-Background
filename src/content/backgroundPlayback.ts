@@ -7,171 +7,73 @@
  * This program is distributed without any warranty; see the license for details.
  */
 
-import { coreLog } from "../utils/logger";
+import { coreLog } from '../utils/logger';
 
+let disposePlayback: (() => void) | null = null;
 
-let videoObserver: MutationObserver | null = null;
-let videoCheckInterval: number | null = null;
-
-const VIDEO_CHECK_INTERVAL_MS = 500;
-
-
-/**
- * Find the current TikTok video element
- */
-function getCurrentVideo(): HTMLVideoElement | null {
-    return document.querySelector('video') || 
-           document.querySelector('[data-e2e="video-player"] video');
+/** Check the current layout instead of retaining a single active video. */
+function isInViewport(video: HTMLVideoElement): boolean {
+    const rect = video.getBoundingClientRect();
+    return rect.width > 0 && rect.height > 0 &&
+        rect.bottom > 0 && rect.right > 0 &&
+        rect.top < window.innerHeight && rect.left < window.innerWidth;
 }
 
-
-/**
- * Enable background playback for a video element by preventing pause when tab is hidden
- */
-function enableBackgroundPlayback(video: HTMLVideoElement): void {
-    // Check if already enabled
-    if (video.dataset.backgroundPlaybackEnabled === 'true') {
+/** Intercept page calls, including videos created later or started in background. */
+export function setupBackgroundPlayback(): void {
+    if (disposePlayback) {
         return;
     }
-    
-    video.dataset.backgroundPlaybackEnabled = 'true';
-    coreLog('Enabling background playback for video element');
-    
-    // Intercept pause events in capture phase (before TikTok handlers)
-    video.addEventListener('pause', function(event: Event) {
-        if (document.hidden || !document.hasFocus()) {
-            coreLog('Pause event blocked - continuing playback in background');
-            event.stopImmediatePropagation(); // Prevent other listeners
-            event.preventDefault(); // Prevent default behavior
-            
-            // Force play immediately
-            video.play().catch(err => {
-                coreLog(`Error resuming playback: ${err}`);
-            });
+
+    let enabled = true;
+    const originalPause = HTMLMediaElement.prototype.pause;
+    const interceptedPause = function(this: HTMLMediaElement): void {
+        if (enabled && document.hidden && this instanceof HTMLVideoElement &&
+            this.isConnected && !this.paused && !this.ended && isInViewport(this)) {
+            return;
         }
-    }, true); // true = capture phase (priority)
-    
-    // Override native pause() method
-    const originalPause = video.pause;
-    video.pause = function() {
-        if (document.hidden || !document.hasFocus()) {
-            coreLog('Native pause() call blocked - maintaining background playback');
-            return; // Do nothing
-        }
-        // Otherwise, call original pause (e.g., user click)
-        return originalPause.apply(this, arguments as any);
+        originalPause.call(this);
     };
-    
-    coreLog('Background playback successfully enabled');
-}
 
-
-/**
- * Setup mutation observer to detect new video elements
- */
-function setupVideoObserver(): void {
-    if (videoObserver) {
-        videoObserver.disconnect();
-    }
-    
-    // Check if document.body exists
-    if (!document.body) {
-        coreLog('Document body not ready yet, waiting...');
-        return;
-    }
-    
-    coreLog('Setting up video observer for TikTok');
-    
-    videoObserver = new MutationObserver(() => {
-        const video = getCurrentVideo();
-        if (video) {
-            enableBackgroundPlayback(video);
+    // A scroll can follow a blocked pause. Stop videos once they leave the
+    // viewport so future auto-scroll does not accumulate background players.
+    const observer = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+            const video = entry.target as HTMLVideoElement;
+            if (!video.isConnected) {
+                observer.unobserve(video);
+            } else if (enabled && document.hidden && !entry.isIntersecting &&
+                !video.paused && !video.ended && !isInViewport(video)) {
+                originalPause.call(video);
+            }
         }
     });
-    
-    videoObserver.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
-}
 
-
-/**
- * Setup periodic check for video elements
- */
-function setupPeriodicVideoCheck(): void {
-    if (videoCheckInterval !== null) {
-        clearInterval(videoCheckInterval);
-    }
-    
-    coreLog('Setting up periodic video check');
-    
-    videoCheckInterval = window.setInterval(() => {
-        const video = getCurrentVideo();
-        if (video && video.dataset.backgroundPlaybackEnabled !== 'true') {
-            enableBackgroundPlayback(video);
+    const onPlay = (event: Event): void => {
+        if (event.target instanceof HTMLVideoElement) {
+            observer.observe(event.target);
         }
-    }, VIDEO_CHECK_INTERVAL_MS);
-}
+    };
 
+    HTMLMediaElement.prototype.pause = interceptedPause;
+    window.addEventListener('play', onPlay, true);
+    document.querySelectorAll<HTMLVideoElement>('video').forEach((video) => observer.observe(video));
 
-/**
- * Wait for DOM to be ready before initializing
- */
-function waitForDOMReady(): Promise<void> {
-    return new Promise((resolve) => {
-        if (document.readyState === 'loading') {
-            coreLog('DOM not ready, waiting for DOMContentLoaded event');
-            document.addEventListener('DOMContentLoaded', () => {
-                coreLog('DOMContentLoaded event fired');
-                resolve();
-            }, { once: true });
-        } else {
-            coreLog('DOM already ready');
-            resolve();
+    disposePlayback = () => {
+        enabled = false;
+        observer.disconnect();
+        window.removeEventListener('play', onPlay, true);
+        // Preserve a method installed by another script after ours.
+        if (HTMLMediaElement.prototype.pause === interceptedPause) {
+            HTMLMediaElement.prototype.pause = originalPause;
         }
-    });
+    };
+
+    coreLog('TikTok background playback enabled');
 }
 
-
-/**
- * Initialize background playback feature for TikTok videos
- */
-export async function setupBackgroundPlayback(): Promise<void> {
-    coreLog('Initializing TikTok background playback');
-    
-    // Wait for DOM to be ready
-    await waitForDOMReady();
-    
-    // Enable for initial video if present
-    const initialVideo = getCurrentVideo();
-    if (initialVideo) {
-        enableBackgroundPlayback(initialVideo);
-    }
-    
-    // Setup observer for new videos
-    setupVideoObserver();
-    
-    // Setup periodic check as fallback
-    setupPeriodicVideoCheck();
-    
-    coreLog('TikTok background playback fully initialized');
-}
-
-
-/**
- * Cleanup all observers and intervals
- */
+/** Restore playback behavior and remove all feature observers and listeners. */
 export function cleanupBackgroundPlayback(): void {
-    coreLog('Cleaning up TikTok background playback');
-    
-    if (videoObserver) {
-        videoObserver.disconnect();
-        videoObserver = null;
-    }
-    
-    if (videoCheckInterval !== null) {
-        clearInterval(videoCheckInterval);
-        videoCheckInterval = null;
-    }
+    disposePlayback?.();
+    disposePlayback = null;
 }

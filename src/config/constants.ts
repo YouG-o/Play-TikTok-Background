@@ -16,6 +16,13 @@ export const DEFAULT_SETTINGS: ExtensionSettings = {
     }
 };
 
+// Shared DOM events carry feature state between the isolated and MAIN worlds.
+export const PLAYBACK_EVENTS = {
+    enable: 'ptb:enable-background-playback',
+    disable: 'ptb:disable-background-playback',
+    ready: 'ptb:background-playback-ready'
+} as const;
+
 // Define the type for installation details
 export interface InstalledDetails {
     reason: 'install' | 'update' | 'browser_update' | 'chrome_update';

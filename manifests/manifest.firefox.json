@@ -25,6 +25,12 @@
 
   "content_scripts": [
     {
+      "matches": ["*://*.tiktok.com/*"],
+      "js": ["dist/content/page.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
       "matches": [
         "*://*.tiktok.com/*"
       ],

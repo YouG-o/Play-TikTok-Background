@@ -1,5 +1,6 @@
 {
   "manifest_version": 3,
+  "minimum_chrome_version": "111",
   "name": "Play TikTok Background",
   "icons": {
     "48": "dist/assets/icons/icon_48.png",
@@ -24,6 +25,12 @@
   ],
 
   "content_scripts": [
+    {
+      "matches": ["*://*.tiktok.com/*"],
+      "js": ["dist/content/page.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
     {
       "matches": [
         "*://*.tiktok.com/*"
